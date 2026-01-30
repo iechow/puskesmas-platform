@@ -2,32 +2,34 @@ import { createClient } from '@supabase/supabase-js'
 
 export default async function handler(req, res) {
   try {
-    const supabaseUrl = process.env.https://gtbxoqzndwjlkdyweopu.supabase.co
-    const supabaseKey = process.env.sb_publishable_QEKeX4zE2L1Z7xnkxPJi1A_oGAlZJid
+    const supabaseUrl = process.env.SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY
 
-    // cek apakah env masuk
     if (!supabaseUrl || !supabaseKey) {
       return res.status(500).json({
-        error: "ENV_MISSING",
-        SUPABASE_URL: supabaseUrl,
-        SUPABASE_PUBLISHABLE_KEY: supabaseKey
+        error: "Supabase env not set",
+        SUPABASE_URL: !!supabaseUrl,
+        SUPABASE_KEY: !!supabaseKey
       })
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { data, error } = await supabase
-      .from('kegiatan')
-      .select('*')
-      .order('tanggal', { ascending: false })
+      .from("kegiatan")
+      .select("*")
+      .order("id", { ascending: false })
 
     if (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error })
     }
 
-    res.status(200).json(data)
+    return res.status(200).json(data)
 
-  } catch (err) {
-    res.status(500).json({ crash: err.message })
+  } catch (e) {
+    return res.status(500).json({
+      message: "Server crash",
+      error: e.message
+    })
   }
 }
