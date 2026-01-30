@@ -49,5 +49,59 @@ async function kirim() {
   hasil.textContent = await res.text();
 }
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabase = supabase.createClient(
+  "https://gtbxoqzndwjkdyweopu.supabase.co",
+  "sb_publishable_QEKex4ZE2L1Z7xnkxPJi1A_oGA1ZJid"
+);
+
+async function kirim() {
+  const judul = document.getElementById("judul").value;
+  const lokasi = document.getElementById("lokasi").value;
+  const tanggal = document.getElementById("tanggal").value;
+  const deskripsi = document.getElementById("deskripsi").value;
+  const file = document.getElementById("foto").files[0];
+
+  if (!file) {
+    alert("Pilih foto dulu");
+    return;
+  }
+
+  // 1. Upload foto ke Supabase Storage
+  const filename = Date.now() + "-" + file.name;
+  const { data, error } = await supabase.storage
+    .from("kegiatan")
+    .upload(filename, file);
+
+  if (error) {
+    alert("Upload foto gagal: " + error.message);
+    return;
+  }
+
+  // 2. Ambil URL publik
+  const { data: urlData } = supabase.storage
+    .from("kegiatan")
+    .getPublicUrl(filename);
+
+  const foto_url = urlData.publicUrl;
+
+  // 3. Simpan data ke tabel kegiatan
+  const res = await fetch("/api/kegiatan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      judul,
+      lokasi,
+      tanggal,
+      deskripsi,
+      foto_url
+    })
+  });
+
+  const hasil = await res.json();
+  alert("Terkirim: " + JSON.stringify(hasil));
+}
+</script>
 </body>
 </html>
