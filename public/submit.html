@@ -2,34 +2,51 @@
 <html>
 <head>
   <title>Kirim Kegiatan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-  <h2>Kirim Usulan Kegiatan</h2>
+<h2>📤 Kirim Usulan Kegiatan</h2>
 
-  <input id="judul" placeholder="Judul"><br>
-  <input id="lokasi" placeholder="Lokasi"><br>
-  <input id="tanggal" type="date"><br>
-  <textarea id="deskripsi" placeholder="Deskripsi"></textarea><br>
+<input id="judul" placeholder="Judul"><br><br>
+<input id="lokasi" placeholder="Lokasi"><br><br>
+<input id="tanggal" type="date"><br><br>
+<textarea id="deskripsi" placeholder="Deskripsi"></textarea><br><br>
 
-  <button onclick="kirim()">Kirim</button>
+<input type="file" id="foto" accept="image/*"><br><br>
+<img id="preview" style="max-width:100%; display:none; border:1px solid #ccc;"><br><br>
 
-  <pre id="hasil"></pre>
+<button onclick="kirim()">Kirim</button>
+
+<pre id="hasil"></pre>
 
 <script>
+const fotoInput = document.getElementById("foto");
+const preview = document.getElementById("preview");
+
+fotoInput.onchange = () => {
+  const file = fotoInput.files[0];
+  if (!file) return;
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+};
+
 async function kirim() {
+  const file = fotoInput.files[0];
+  if (!file) return alert("Pilih foto dulu");
+
+  const fd = new FormData();
+  fd.append("judul", judul.value);
+  fd.append("lokasi", lokasi.value);
+  fd.append("tanggal", tanggal.value);
+  fd.append("deskripsi", deskripsi.value);
+  fd.append("foto", file);
+
   const res = await fetch("/api/kegiatan", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      judul: judul.value,
-      lokasi: lokasi.value,
-      tanggal: tanggal.value,
-      deskripsi: deskripsi.value
-    })
+    body: fd
   });
 
-  const data = await res.json();
-  hasil.textContent = JSON.stringify(data, null, 2);
+  hasil.textContent = await res.text();
 }
 </script>
 </body>
