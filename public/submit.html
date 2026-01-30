@@ -1,25 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Kirim Kegiatan</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-<h2>📤 Kirim Usulan Kegiatan</h2>
-
-<input id="judul" placeholder="Judul"><br><br>
-<input id="lokasi" placeholder="Lokasi"><br><br>
-<input id="tanggal" type="date"><br><br>
-<textarea id="deskripsi" placeholder="Deskripsi"></textarea><br><br>
-
-<input type="file" id="foto" accept="image/*"><br><br>
-<img id="preview" style="max-width:100%; display:none; border:1px solid #ccc;"><br><br>
-
-<button onclick="kirim()">Kirim</button>
-
-<pre id="hasil"></pre>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const supabase = supabase.createClient(
+  "https://gtbxoqzndwjkdyweopu.supabase.co",
+  "sb_publishable_QEKex4ZE2L1Z7xnkxPJi1A_oGA1ZJid"
+);
+
 const fotoInput = document.getElementById("foto");
 const preview = document.getElementById("preview");
 
@@ -31,62 +16,36 @@ fotoInput.onchange = () => {
 };
 
 async function kirim() {
-  const file = fotoInput.files[0];
-  if (!file) return alert("Pilih foto dulu");
-
-  const fd = new FormData();
-  fd.append("judul", judul.value);
-  fd.append("lokasi", lokasi.value);
-  fd.append("tanggal", tanggal.value);
-  fd.append("deskripsi", deskripsi.value);
-  fd.append("foto", file);
-
-  const res = await fetch("/api/kegiatan", {
-    method: "POST",
-    body: fd
-  });
-
-  hasil.textContent = await res.text();
-}
-</script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const supabase = supabase.createClient(
-  "https://gtbxoqzndwjkdyweopu.supabase.co",
-  "sb_publishable_QEKex4ZE2L1Z7xnkxPJi1A_oGA1ZJid"
-);
-
-async function kirim() {
   const judul = document.getElementById("judul").value;
   const lokasi = document.getElementById("lokasi").value;
   const tanggal = document.getElementById("tanggal").value;
   const deskripsi = document.getElementById("deskripsi").value;
-  const file = document.getElementById("foto").files[0];
+  const file = fotoInput.files[0];
 
-  if (!file) {
-    alert("Pilih foto dulu");
+  if (!judul || !lokasi || !tanggal || !deskripsi || !file) {
+    alert("Semua field wajib diisi");
     return;
   }
 
-  // 1. Upload foto ke Supabase Storage
+  // 1️⃣ Upload foto ke storage
   const filename = Date.now() + "-" + file.name;
-  const { data, error } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from("kegiatan")
     .upload(filename, file);
 
-  if (error) {
-    alert("Upload foto gagal: " + error.message);
+  if (uploadError) {
+    alert("Upload gagal: " + uploadError.message);
     return;
   }
 
-  // 2. Ambil URL publik
+  // 2️⃣ Ambil URL publik
   const { data: urlData } = supabase.storage
     .from("kegiatan")
     .getPublicUrl(filename);
 
   const foto_url = urlData.publicUrl;
 
-  // 3. Simpan data ke tabel kegiatan
+  // 3️⃣ Simpan ke database lewat API kamu
   const res = await fetch("/api/kegiatan", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -101,12 +60,11 @@ async function kirim() {
 
   const data = await res.json();
 
-if (data.status === "ok") {
-  alert("Usulan terkirim! Menunggu verifikasi.");
-  window.location.href = "/"; // kembali ke beranda
-} else {
-  alert("Gagal mengirim.");
+  if (data.status === "ok") {
+    alert("Usulan terkirim dan menunggu verifikasi");
+    window.location.href = "/";
+  } else {
+    alert("Gagal menyimpan data");
+  }
 }
 </script>
-</body>
-</html>
