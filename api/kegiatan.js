@@ -6,18 +6,18 @@ const supabase = createClient(
 )
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' })
+  try {
+    const { data, error } = await supabase
+      .from('kegiatan')
+      .select('*')
+      .order('tanggal', { ascending: true })
+
+    if (error) {
+      return res.status(500).json({ error: error.message })
+    }
+
+    res.status(200).json(data)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
   }
-
-  const { data, error } = await supabase
-    .from('kegiatan')
-    .select('id, judul, tanggal, lokasi, foto_url, status')
-    .order('tanggal', { ascending: true })
-
-  if (error) {
-    return res.status(500).json({ error: error.message })
-  }
-
-  res.status(200).json(data)
 }
