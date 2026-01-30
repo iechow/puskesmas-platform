@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Puskesmas Kombay</title>
+</head>
+<body>
+
+<h2>Login Petugas</h2>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+
+<hr>
+
+<h2>Posting Kegiatan</h2>
+<input id="judul" placeholder="Judul"><br>
+<input id="tanggal" type="date"><br>
+<input id="lokasi" placeholder="Lokasi"><br>
+<textarea id="deskripsi" placeholder="Deskripsi"></textarea><br>
+<input id="foto" placeholder="URL Foto"><br>
+<button onclick="kirim()">Kirim</button>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script type="module" src="supabase.js"></script>
+<script type="module" src="admin.js"></script>
+<form id="loginForm">
+</body>
+</html>

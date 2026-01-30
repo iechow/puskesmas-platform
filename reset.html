@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Reset Password</title>
+</head>
+<body>
+  <h2>Reset Password</h2>
+  <p id="status">Memuat...</p>
+
+  <input type="password" id="newpass" placeholder="Password baru" />
+  <button id="btn">Ubah Password</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://gtbxoqzndwjlkdyweopu.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_QEKeX4zE2L1Z7xnkxPJi1A_oGAlZJid";
+
+    document.getElementById("status").innerText = "JS hidup";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById("btn").onclick = async () => {
+      try {
+        document.getElementById("status").innerText = "Membaca token...";
+
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const access_token = params.get("access_token");
+        const refresh_token = params.get("refresh_token");
+
+        if (!access_token) {
+          alert("Token tidak ditemukan di URL");
+          return;
+        }
+
+        document.getElementById("status").innerText = "Set session...";
+
+        await client.auth.setSession({
+          access_token,
+          refresh_token
+        });
+
+        document.getElementById("status").innerText = "Mengubah password...";
+
+        const { error } = await client.auth.updateUser({
+          password: document.getElementById("newpass").value
+        });
+
+        if (error) {
+          alert("ERROR: " + error.message);
+        } else {
+          alert("Password berhasil diubah");
+          document.getElementById("status").innerText = "SUKSES";
+        }
+
+      } catch (e) {
+        alert("JS CRASH: " + e.message);
+      }
+    };
+  </script>
+</body>
+</html>

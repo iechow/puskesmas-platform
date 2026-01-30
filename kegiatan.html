@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kegiatan Puskesmas</title>
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #eef6f5;
+}
+header {
+    background: #0d6b6b;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+a {
+    color: #0d6b6b;
+    text-decoration: none;
+}
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 15px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 22px;
+    }
+
+    nav a {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .post {
+        padding: 10px;
+    }
+}
+.post {
+    background: white;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+.post img {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+footer {
+    background: #0d6b6b;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+.animate {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease;
+}
+
+.animate.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Kegiatan Puskesmas</h1>
+    <p><a href="index.html" style="color:white;">⬅ Kembali ke Beranda</a></p>
+</header>
+
+<div class="container">
+  <div id="list-kegiatan"></div>
+</div>
+
+<footer>
+    <p>© 2026 Puskesmas Harapan Sehat</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
+});
+
+async function loadKegiatan() {
+  const { data, error } = await supabase
+    .from("kegiatan")
+    .select("*")
+    .order("tanggal", { ascending: false });
+
+  if (error) {
+    document.getElementById("list-kegiatan").innerText = error.message;
+    return;
+  }
+
+  let html = "";
+  data.forEach(k => {
+    html += `
+      <div class="post animate">
+        <h3>${k.judul}</h3>
+        <small>${k.tanggal} – ${k.lokasi}</small>
+        <p>${k.deskripsi}</p>
+        ${k.foto_url ? `<img src="${k.foto_url}">` : ""}
+      </div>
+    `;
+  });
+
+  document.getElementById("list-kegiatan").innerHTML = html;
+
+  document.querySelectorAll(".animate").forEach(el => {
+    observer.observe(el);
+  });
+}
+
+loadKegiatan();
+</script>
+</body>
+</html>
