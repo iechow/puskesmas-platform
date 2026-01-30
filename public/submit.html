@@ -99,8 +99,13 @@ async function kirim() {
     })
   });
 
-  const hasil = await res.json();
-  alert("Terkirim: " + JSON.stringify(hasil));
+  const data = await res.json();
+
+if (data.status === "ok") {
+  alert("Usulan terkirim! Menunggu verifikasi.");
+  window.location.href = "/"; // kembali ke beranda
+} else {
+  alert("Gagal mengirim.");
 }
 </script>
 </body>
