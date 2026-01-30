@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kirim Kegiatan</title>
+</head>
+<body>
+  <h2>Kirim Usulan Kegiatan</h2>
+
+  <input id="judul" placeholder="Judul"><br>
+  <input id="lokasi" placeholder="Lokasi"><br>
+  <input id="tanggal" type="date"><br>
+  <textarea id="deskripsi" placeholder="Deskripsi"></textarea><br>
+
+  <button onclick="kirim()">Kirim</button>
+
+  <pre id="hasil"></pre>
+
+<script>
+async function kirim() {
+  const res = await fetch("/api/kegiatan", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      judul: judul.value,
+      lokasi: lokasi.value,
+      tanggal: tanggal.value,
+      deskripsi: deskripsi.value
+    })
+  });
+
+  const data = await res.json();
+  hasil.textContent = JSON.stringify(data, null, 2);
+}
+</script>
+</body>
+</html>
