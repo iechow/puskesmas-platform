@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kegiatan Puskesmas Kombay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 10px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .post {
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .post img {
+      width: 100%;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    .meta {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .date {
+      color: #2563eb;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>📋 Kegiatan Puskesmas Kombay</h1>
+  <div id="feed">Memuat…</div>
+
+<script>
+async function loadFeed() {
+  const res = await fetch("/api/kegiatan");
+  const json = await res.json();
+
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+
+  json.data
+    .filter(item => item.status === "published")
+    .forEach(item => {
+      const div = document.createElement("div");
+      div.className = "post";
+
+      div.innerHTML = `
+        <h2>${item.judul}</h2>
+
+        <img src="${item.foto_url}" />
+
+        <div class="meta">
+          📍 ${item.lokasi} &nbsp;&nbsp; 
+          <span class="date">📅 ${item.tanggal}</span>
+        </div>
+
+        <p>${item.deskripsi}</p>
+      `;
+
+      feed.appendChild(div);
+    });
+}
+
+loadFeed();
+</script>
+
+</body>
+</html>
