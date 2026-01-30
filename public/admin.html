@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Verifikasi Kegiatan</title>
+  <style>
+    body { font-family: sans-serif; padding:20px; background:#f4f4f4 }
+    .card {
+      background:white;
+      padding:15px;
+      margin-bottom:15px;
+      border-radius:10px;
+    }
+    button {
+      background:green;
+      color:white;
+      border:none;
+      padding:8px 12px;
+      border-radius:5px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🛡️ Admin – Kegiatan Menunggu Verifikasi</h2>
+
+<div id="list"></div>
+
+<script>
+async function load() {
+  const res = await fetch("/api/admin-kegiatan");
+  const data = await res.json();
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(k => {
+    list.innerHTML += `
+      <div class="card">
+        <h3>${k.judul}</h3>
+        <p>${k.deskripsi}</p>
+        <small>${k.lokasi} | ${k.tanggal}</small><br><br>
+        <button onclick="approve(${k.id})">Publish</button>
+      </div>
+    `;
+  });
+}
+
+async function approve(id) {
+  await fetch("/api/approve", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
