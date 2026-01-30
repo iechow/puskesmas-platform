@@ -1,10 +1,4 @@
 {
   "name": "puskesmas-platform",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo build",
-    "start": "node api/health.js"
-  }
+  "private": true
 }
