@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const supabase = createClient(supabaseUrl, serviceKey);
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // ===============================
     // GET → ambil kegiatan approved
