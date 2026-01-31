@@ -2,6 +2,7 @@
   "name": "puskesmas-platform",
   "version": "1.0.0",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.5"
+    "@supabase/supabase-js": "^2.39.5",
+    "busboy": "^1.6.0"
   }
 }
