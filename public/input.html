@@ -1,58 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Kirim Kegiatan</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-    }
-    button {
-      background: #0d6efd;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-  </style>
-</head>
-<body>
-
-<h2>📤 Kirim Kegiatan</h2>
-
-<input id="judul" placeholder="Judul kegiatan">
-<input id="lokasi" placeholder="Lokasi">
-<input id="tanggal" type="date">
-<textarea id="deskripsi" placeholder="Deskripsi kegiatan"></textarea>
-<input id="foto" type="file">
-
-<button onclick="kirim()">Kirim</button>
-
-<p id="status"></p>
-
 <script>
 async function kirim() {
   const status = document.getElementById("status");
   status.innerText = "Mengirim...";
 
-  const data = {
-    judul: judul.value,
-    lokasi: lokasi.value,
-    tanggal: tanggal.value,
-    deskripsi: deskripsi.value,
-    foto_url: ""   // nanti kita isi
-  };
+  const form = new FormData();
+  form.append("judul", document.getElementById("judul").value);
+  form.append("lokasi", document.getElementById("lokasi").value);
+  form.append("tanggal", document.getElementById("tanggal").value);
+  form.append("deskripsi", document.getElementById("deskripsi").value);
+  form.append("foto", document.getElementById("foto").files[0]);
 
-  const res = await fetch("/api/kegiatan", {
+  const res = await fetch("/api/input", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    body: form
   });
 
   const r = await res.json();
@@ -60,10 +20,7 @@ async function kirim() {
   if (r.status === "ok") {
     status.innerText = "Berhasil dikirim. Menunggu verifikasi admin.";
   } else {
-    status.innerText = "Gagal mengirim.";
+    status.innerText = "Gagal: " + (r.error || "unknown error");
   }
 }
 </script>
-
-</body>
-</html>
