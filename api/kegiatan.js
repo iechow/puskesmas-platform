@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from("kegiatan")
         .select("*")
-        .eq("status", "approved")
+        .eq("status", "published")
         .order("tanggal", { ascending: false });
 
       if (error) {
