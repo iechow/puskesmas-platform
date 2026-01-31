@@ -1,79 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Kegiatan Puskesmas Kombay</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f3f4f6;
-      margin: 0;
-      padding: 10px;
-    }
-    h1 {
-      text-align: center;
-    }
-    .post {
-      background: white;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    .post img {
-      width: 100%;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
-    .meta {
-      color: #555;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-    .date {
-      color: #2563eb;
-      font-weight: bold;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>📋 Kegiatan Puskesmas Kombay</h1>
-  <div id="feed">Memuat…</div>
+<div id="list"></div>
 
 <script>
-async function loadFeed() {
+async function loadKegiatan() {
   const res = await fetch("/api/kegiatan");
   const json = await res.json();
 
-  const feed = document.getElementById("feed");
-  feed.innerHTML = "";
+  if (!json.data || json.data.length === 0) {
+    document.getElementById("list").innerHTML =
+      "<p>Belum ada kegiatan.</p>";
+    return;
+  }
 
-  json.data
-    .filter(item => item.status === "published")
-    .forEach(item => {
-      const div = document.createElement("div");
-      div.className = "post";
+  let html = "";
+  json.data.forEach(k => {
+    html += `
+      <div style="background:#fff;padding:16px;margin:16px 0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+        <h3>${k.judul}</h3>
+        <img src="${k.foto_url || ''}" style="max-width:100%;border-radius:8px;margin:10px 0">
+        <p>📍 ${k.lokasi || ''}</p>
+        <p>📅 ${k.tanggal || ''}</p>
+        <p>${k.deskripsi || ''}</p>
+      </div>
+    `;
+  });
 
-      div.innerHTML = `
-        <h2>${item.judul}</h2>
-
-        <img src="${item.foto_url}" />
-
-        <div class="meta">
-          📍 ${item.lokasi} &nbsp;&nbsp; 
-          <span class="date">📅 ${item.tanggal}</span>
-        </div>
-
-        <p>${item.deskripsi}</p>
-      `;
-
-      feed.appendChild(div);
-    });
+  document.getElementById("list").innerHTML = html;
 }
 
-loadFeed();
+loadKegiatan();
 </script>
-
-</body>
-</html>
