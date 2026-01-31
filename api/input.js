@@ -1,71 +1,68 @@
 import { createClient } from "@supabase/supabase-js";
-import Busboy from "busboy";
 
 export const config = {
-  api: { bodyParser: false }
+  runtime: "edge"
 };
 
-export default async function handler(req, res) {
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+export default async function handler(req) {
+  try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
-  const data = {};
-  let file;
+    const form = await req.formData();
 
-  const bb = Busboy({ headers: req.headers });
+    const judul = form.get("judul");
+    const lokasi = form.get("lokasi");
+    const tanggal = form.get("tanggal");
+    const deskripsi = form.get("deskripsi");
+    const file = form.get("foto");
 
-  bb.on("field", (name, val) => {
-    data[name] = val;
-  });
-
-  bb.on("file", (name, stream, info) => {
-    const buffers = [];
-    stream.on("data", d => buffers.push(d));
-    stream.on("end", () => {
-      file = {
-        buffer: Buffer.concat(buffers),
-        filename: info.filename,
-        mimetype: info.mimeType
-      };
-    });
-  });
-
-  bb.on("finish", async () => {
-    try {
-      const fileName = `${Date.now()}-${file.filename}`;
-
-      const { error } = await supabase.storage
-        .from("kegiatan")
-        .upload(fileName, file.buffer, {
-          contentType: file.mimetype
-        });
-
-      if (error) return res.status(500).json({ error });
-
-      const foto_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/kegiatan/${fileName}`;
-
-      const { error: dbError } = await supabase
-        .from("kegiatan")
-        .insert([
-          {
-            judul: data.judul,
-            lokasi: data.lokasi,
-            tanggal: data.tanggal,
-            deskripsi: data.deskripsi,
-            foto_url,
-            status: "pending"
-          }
-        ]);
-
-      if (dbError) return res.status(500).json({ error: dbError });
-
-      res.json({ status: "ok" });
-    } catch (e) {
-      res.status(500).json({ error: e.message });
+    if (!file) {
+      return new Response(
+        JSON.stringify({ error: "No file uploaded" }),
+        { status: 400 }
+      );
     }
-  });
 
-  req.pipe(bb);
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from("kegiatan")
+      .upload(fileName, file, {
+        contentType: file.type
+      });
+
+    if (error) {
+      return new Response(JSON.stringify({ error }), { status: 500 });
+    }
+
+    const photoUrl =
+      `${process.env.SUPABASE_URL}/storage/v1/object/public/kegiatan/${fileName}`;
+
+    const { error: dbError } = await supabase
+      .from("kegiatan")
+      .insert([
+        {
+          judul,
+          lokasi,
+          tanggal,
+          deskripsi,
+          foto_url: photoUrl,
+          status: "pending"
+        }
+      ]);
+
+    if (dbError) {
+      return new Response(JSON.stringify({ error: dbError }), { status: 500 });
+    }
+
+    return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
+  } catch (e) {
+    return new Response(
+      JSON.stringify({ error: e.message }),
+      { status: 500 }
+    );
+  }
 }
