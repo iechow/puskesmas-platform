@@ -2,60 +2,70 @@ export const config = {
   runtime: "nodejs"
 };
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
   try {
-    // 1. Ambil ENV dari Vercel
-    const supabaseUrl = process.env.SUPABASE_URL
-    const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    // 2. Endpoint debug (untuk memastikan ENV benar-benar masuk)
-    if (req.query.debug === '1') {
-      return res.status(200).json({
-        SUPABASE_URL: supabaseUrl || null,
-        SUPABASE_PUBLISHABLE_KEY: supabaseKey ? 'SET' : null
-      })
-    }
-
-    // 3. Validasi ENV
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabaseUrl || !serviceKey) {
       return res.status(500).json({
-        error: "Supabase ENV not set",
-        supabaseUrl: supabaseUrl || null,
-        supabaseKey: supabaseKey ? 'SET' : null
-      })
+        error: "Supabase env missing",
+        supabaseUrl: supabaseUrl ? "OK" : "MISSING",
+        serviceKey: serviceKey ? "OK" : "MISSING"
+      });
     }
 
-    // 4. Buat client Supabase
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabase = createClient(supabaseUrl, serviceKey);
 
-    // 5. Ambil data kegiatan
-    const { data, error } = await supabase
-      .from('kegiatan')
-      .select('*')
-      .order('id', { ascending: false })
+    // ===============================
+    // GET → ambil kegiatan approved
+    // ===============================
+    if (req.method === "GET") {
+      const { data, error } = await supabase
+        .from("kegiatan")
+        .select("*")
+        .eq("status", "approved")
+        .order("tanggal", { ascending: false });
 
-    // 6. Jika Supabase error
-    if (error) {
-      return res.status(500).json({
-        error: "Supabase query failed",
-        details: error
-      })
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      return res.json({ status: "ok", data });
     }
 
-    // 7. Kirim data ke client
-    return res.status(200).json({
-      status: "ok",
-      count: data.length,
-      data
-    })
+    // ===============================
+    // POST → kirim usulan baru
+    // ===============================
+    if (req.method === "POST") {
+      const { judul, lokasi, tanggal, deskripsi, foto_url } = req.body;
 
+      const { data, error } = await supabase
+        .from("kegiatan")
+        .insert([
+          {
+            judul,
+            lokasi,
+            tanggal,
+            deskripsi,
+            foto_url,
+            status: "pending"
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      return res.json({ status: "ok", data });
+    }
+
+    res.status(405).json({ error: "Method not allowed" });
   } catch (e) {
-    // 8. Jika server crash
-    return res.status(500).json({
-      error: "Server crashed",
-      message: e.message
-    })
+    res.status(500).json({ error: e.message });
   }
 }
