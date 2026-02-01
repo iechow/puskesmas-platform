@@ -1,68 +1,77 @@
-import { createClient } from "@supabase/supabase-js";
-
-export const config = {
-  runtime: "nodejs"
-};
-
-export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kirim Kegiatan</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #f5f7fb;
     }
-
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
-    const form = await req.formData();
-
-    const judul = form.get("judul");
-    const lokasi = form.get("lokasi");
-    const tanggal = form.get("tanggal");
-    const deskripsi = form.get("deskripsi");
-    const file = form.get("foto");
-
-    if (!file) {
-      return res.status(400).json({ error: "File foto wajib" });
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const fileName = `${Date.now()}-${file.name}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("kegiatan")
-      .upload(fileName, buffer, {
-        contentType: file.type
-      });
-
-    if (uploadError) {
-      return res.status(500).json({ error: uploadError.message });
+    button {
+      background: #0d6efd;
+      color: white;
+      border: none;
+      font-weight: bold;
     }
-
-    const foto_url =
-      `${process.env.SUPABASE_URL}/storage/v1/object/public/kegiatan/${fileName}`;
-
-    const { error: dbError } = await supabase
-      .from("kegiatan")
-      .insert({
-        judul,
-        lokasi,
-        tanggal,
-        deskripsi,
-        foto_url,
-        status: "pending"
-      });
-
-    if (dbError) {
-      return res.status(500).json({ error: dbError.message });
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
+  </style>
+</head>
+<body>
 
-    res.json({ status: "ok" });
+<div class="card">
+  <h2>📤 Kirim Kegiatan</h2>
 
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  <input id="judul" placeholder="Judul kegiatan">
+  <input id="lokasi" placeholder="Lokasi">
+  <input id="tanggal" type="date">
+  <textarea id="deskripsi" placeholder="Deskripsi kegiatan"></textarea>
+  <input id="foto" type="file">
+
+  <button onclick="kirim()">Kirim</button>
+  <p id="status"></p>
+</div>
+
+<script>
+async function kirim() {
+  const status = document.getElementById("status");
+  status.innerText = "Mengirim...";
+
+  const form = new FormData();
+  form.append("judul", document.getElementById("judul").value);
+  form.append("lokasi", document.getElementById("lokasi").value);
+  form.append("tanggal", document.getElementById("tanggal").value);
+  form.append("deskripsi", document.getElementById("deskripsi").value);
+  form.append("foto", document.getElementById("foto").files[0]);
+
+  const res = await fetch("/api/input", {
+    method: "POST",
+    body: form
+  });
+
+  const r = await res.json();
+
+  if (r.status === "ok") {
+    status.innerText = "Berhasil dikirim. Menunggu verifikasi admin.";
+  } else {
+    status.innerText = "Gagal: " + (r.error || "unknown error");
   }
 }
+</script>
+
+</body>
+</html>
