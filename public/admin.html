@@ -33,10 +33,16 @@ async function load() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
+  if (!data.length) {
+    list.innerHTML = "<p>Tidak ada kegiatan menunggu verifikasi.</p>";
+    return;
+  }
+
   data.forEach(k => {
     list.innerHTML += `
       <div class="card">
         <h3>${k.judul}</h3>
+        <img src="${k.foto_url}" style="width:100%;border-radius:10px;margin:10px 0">
         <p>${k.deskripsi}</p>
         <small>${k.lokasi} | ${k.tanggal}</small><br><br>
         <button onclick="approve(${k.id})">Publish</button>
