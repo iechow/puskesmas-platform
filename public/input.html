@@ -66,8 +66,9 @@ async function kirim() {
   const r = await res.json();
 
   if (r.status === "ok") {
-    status.innerText = "Berhasil dikirim. Menunggu verifikasi admin.";
-  } else {
+  alert("Berhasil dikirim. Menunggu verifikasi admin.");
+  window.location.href = "/";
+} else {
     status.innerText = "Gagal: " + (r.error || "unknown error");
   }
 }
