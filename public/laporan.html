@@ -2,6 +2,13 @@
 <html>
 <head>
 <title>Laporan</title>
+  <script>
+fetch("/header.html")
+  .then(r => r.text())
+  .then(h => document.body.insertAdjacentHTML("afterbegin", h));
+</script>
+
+<link rel="stylesheet" href="/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
