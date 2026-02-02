@@ -23,6 +23,15 @@ header{
 </style>
 </head>
 <body>
+  <div id="menu"></div>
+
+<script>
+fetch("/menu.html")
+.then(r=>r.text())
+.then(html=>{
+  document.getElementById("menu").innerHTML = html;
+});
+</script>
 
 <header>
   <h2>Profil Puskesmas Kombay</h2>
