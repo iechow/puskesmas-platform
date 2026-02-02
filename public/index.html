@@ -4,13 +4,14 @@
   <title>Puskesmas Kombay</title>
   <script>
 <script>
-fetch("/menu.html?v=" + Date.now())
-  .then(r => r.text())
-  .then(h => {
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
+  fetch("/menu.html?v=" + Date.now())
+    .then(r => r.text())
+    .then(h => {
       document.body.insertAdjacentHTML("afterbegin", h);
-    });
-  });
+    })
+    .catch(err => console.error("Menu load error", err));
+});
 </script>
 <link rel="stylesheet" href="/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
