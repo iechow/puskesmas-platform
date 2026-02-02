@@ -6,10 +6,11 @@
 <script>
 fetch("/header.html?v=" + Date.now())
   .then(r => r.text())
-  .then(h => document.body.insertAdjacentHTML("afterbegin", h));
-</script>
-  .then(r => r.text())
-  .then(h => document.body.insertAdjacentHTML("afterbegin", h));
+  .then(h => {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.insertAdjacentHTML("afterbegin", h);
+    });
+  });
 </script>
 
 <link rel="stylesheet" href="/style.css">
