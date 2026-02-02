@@ -43,6 +43,15 @@
   </style>
 </head>
 <body>
+  <div id="menu"></div>
+
+<script>
+fetch("/menu.html")
+.then(r=>r.text())
+.then(html=>{
+  document.getElementById("menu").innerHTML = html;
+});
+</script>
 
   <h1>📋 Kegiatan Puskesmas Kombay</h1>
 
