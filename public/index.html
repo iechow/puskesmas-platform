@@ -35,16 +35,16 @@ html += `
 
 <!-- MENU -->
 <div id="menu"></div>
-
+<div style="padding:40px 20px;background:#0d6efd;color:white;text-align:center">
+  <h1>Puskesmas Kombay</h1>
+  <p>Melayani dengan kasih, menjaga kehidupan masyarakat</p>
+</div>
 <script>
 fetch("/menu.html")
   .then(r => r.text())
   .then(t => document.getElementById("menu").innerHTML = t);
 </script>
-<div style="padding:40px 20px;background:#0d6efd;color:white;text-align:center">
-  <h1>Puskesmas Kombay</h1>
-  <p>Melayani dengan kasih, menjaga kehidupan masyarakat</p>
-</div>
+
 <!-- ISI -->
 <div class="container">
   <h2>🩺 Puskesmas Kombay</h2>
