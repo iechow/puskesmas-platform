@@ -17,17 +17,21 @@
   </style>
 </head>
 <body>
-  <div style="
-  background: linear-gradient(135deg, #0d6efd, #0a58ca);
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
+html += `
+<div style="
+  background:white;
+  padding:16px;
+  margin:16px;
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.08)
 ">
-  <h1 style="margin:0">Puskesmas Kombay</h1>
-  <p style="margin:10px 0 0; opacity:0.9">
-    Melayani dengan kasih, menjaga kehidupan masyarakat
-  </p>
+  <img src="${k.foto_url}" style="width:100%;border-radius:10px">
+  <h3 style="margin-top:10px">${k.judul}</h3>
+  <p>📍 ${k.lokasi}</p>
+  <p>📅 ${k.tanggal}</p>
+  <p>${k.deskripsi}</p>
 </div>
+`;
 
 <!-- MENU -->
 <div id="menu"></div>
@@ -37,7 +41,10 @@ fetch("/menu.html")
   .then(r => r.text())
   .then(t => document.getElementById("menu").innerHTML = t);
 </script>
-
+<div style="padding:40px 20px;background:#0d6efd;color:white;text-align:center">
+  <h1>Puskesmas Kombay</h1>
+  <p>Melayani dengan kasih, menjaga kehidupan masyarakat</p>
+</div>
 <!-- ISI -->
 <div class="container">
   <h2>🩺 Puskesmas Kombay</h2>
