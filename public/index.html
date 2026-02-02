@@ -5,7 +5,7 @@
   <script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("/menu.html?v=" + Date.now())
+  fetch("/public/menu.html?v=" + Date.now())
     .then(r => r.text())
     .then(h => {
       document.body.insertAdjacentHTML("afterbegin", h);
