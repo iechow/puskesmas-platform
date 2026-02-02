@@ -1,4 +1,42 @@
-<div id="list"></div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Puskesmas Kombay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:#f4f8ff;
+    }
+    .container{
+      padding:20px;
+      max-width:900px;
+      margin:auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menu"></div>
+
+<!-- ISI -->
+<div class="container">
+  <h2>🩺 Puskesmas Kombay</h2>
+  <p>Pelayanan kesehatan masyarakat Kampung Kombay</p>
+
+  <h3>Kegiatan Terbaru</h3>
+  <div id="list"></div>
+</div>
+
+<script>
+fetch("/menu.html")
+.then(r=>r.text())
+.then(html=>{
+  document.getElementById("menu").innerHTML = html;
+});
+</script>
 
 <script>
 async function loadKegiatan() {
@@ -6,20 +44,19 @@ async function loadKegiatan() {
   const json = await res.json();
 
   if (!json.data || json.data.length === 0) {
-    document.getElementById("list").innerHTML =
-      "<p>Belum ada kegiatan.</p>";
+    document.getElementById("list").innerHTML = "<p>Belum ada kegiatan.</p>";
     return;
   }
 
   let html = "";
   json.data.forEach(k => {
     html += `
-      <div style="background:#fff;padding:16px;margin:16px 0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+      <div style="background:#fff;padding:16px;margin:16px 0;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.08)">
         <h3>${k.judul}</h3>
-        <img src="${k.foto_url || ''}" style="max-width:100%;border-radius:8px;margin:10px 0">
-        <p>📍 ${k.lokasi || ''}</p>
-        <p>📅 ${k.tanggal || ''}</p>
-        <p>${k.deskripsi || ''}</p>
+        ${k.foto_url ? `<img src="${k.foto_url}" style="max-width:100%;border-radius:8px;margin:10px 0">` : ""}
+        <p>📍 ${k.lokasi}</p>
+        <p>📅 ${k.tanggal}</p>
+        <p>${k.deskripsi}</p>
       </div>
     `;
   });
@@ -29,3 +66,6 @@ async function loadKegiatan() {
 
 loadKegiatan();
 </script>
+
+</body>
+</html>
