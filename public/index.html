@@ -29,15 +29,6 @@ fetch("/menu.html")
   <h3>Kegiatan Terbaru</h3>
   <div id="list"></div>
 </div>
-
-<script>
-fetch("/menu.html")
-.then(r=>r.text())
-.then(html=>{
-  document.getElementById("menu").innerHTML = html;
-});
-</script>
-
 <script>
 async function loadKegiatan() {
   const res = await fetch("/api/kegiatan");
