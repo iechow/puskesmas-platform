@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return r.text();
     })
     .then(h => {
-      document.body.insertAdjacentHTML("afterbegin", h);
+      document.insertAdjacentHTML("afterbegin", h);
     })
     .catch(err => {
       console.error("MENU LOAD FAILED:", err);
