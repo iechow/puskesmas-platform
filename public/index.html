@@ -6,6 +6,7 @@
   <h1>Puskesmas Kombay</h1>
   <p>Melayani dengan kasih, menjaga kehidupan masyarakat</p>
   </div>
+  <div id="menu-slot"></div>
 <link rel="stylesheet" href="/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -14,16 +15,11 @@
   <script>
 document.addEventListener("DOMContentLoaded", () => {
   fetch("/menu.html?v=" + Date.now())
-    .then(r => {
-      if (!r.ok) throw new Error("Menu not found");
-      return r.text();
-    })
+    .then(r => r.text())
     .then(h => {
-      document.insertAdjacentHTML("afterbegin", h);
+      document.getElementById("menu-slot").innerHTML = h;
     })
-    .catch(err => {
-      console.error("MENU LOAD FAILED:", err);
-    });
+    .catch(err => console.error("MENU LOAD FAILED", err));
 });
 </script>
 <!-- ISI -->
