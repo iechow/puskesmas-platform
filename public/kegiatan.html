@@ -2,46 +2,13 @@
 <html>
 <head>
   <title>Kegiatan Puskesmas</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f4f6fb;
-      margin: 0;
-      padding: 0;
-    }
+  <script>
+fetch("/header.html")
+  .then(r => r.text())
+  .then(h => document.body.insertAdjacentHTML("afterbegin", h));
+</script>
 
-    #list {
-      max-width: 700px;
-      margin: 20px auto;
-      padding: 10px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-    }
-
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-      margin: 10px 0;
-      object-fit: cover;
-    }
-
-    .judul {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .meta {
-      color: #555;
-      font-size: 14px;
-    }
-  </style>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div id="menu"></div>
