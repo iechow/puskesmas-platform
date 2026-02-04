@@ -1,4 +1,4 @@
-const CACHE_NAME = "puskesmas-v4";
+const CACHE_NAME = "puskesmas-v5";
 
 // Install – cache hanya file statis
 self.addEventListener("install", event => {
