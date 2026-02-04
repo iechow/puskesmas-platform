@@ -27,19 +27,17 @@ self.addEventListener("activate", e => {
 });
 
 // Fetch
-self.addEventListener("fetch", e => {
-  const url = e.request.url;
+self.addEventListener("fetch", event => {
+  const url = new URL(event.request.url);
 
-  // API Supabase → selalu ambil network
-  if (url.includes("/api/") || url.includes("supabase")) {
-    e.respondWith(fetch(e.request));
-    return;
+  // JANGAN cache API
+  if (url.pathname.startsWith("/api/")) {
+    return; // biarkan browser fetch normal
   }
 
-  // File statis → cache first
-  e.respondWith(
-    caches.match(e.request).then(res => {
-      return res || fetch(e.request);
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request);
     })
   );
 });
