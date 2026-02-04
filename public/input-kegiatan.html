@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Input Jadwal Kegiatan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menu-slot"></div>
+<script>
+fetch("/menu.html").then(r => r.text()).then(h => {
+  document.getElementById("menu-slot").innerHTML = h;
+});
+</script>
+
+<div class="container">
+  <h2>📅 Input Jadwal Kegiatan Luar Gedung</h2>
+
+  <div class="card">
+    <input id="judul" placeholder="Nama kegiatan" />
+    <input id="lokasi" placeholder="Lokasi kegiatan" />
+    <input id="tanggal" type="date" />
+    <textarea id="deskripsi" placeholder="Deskripsi kegiatan"></textarea>
+
+    <input type="file" id="foto" />
+
+    <button onclick="kirim()">Kirim</button>
+    <p id="msg"></p>
+  </div>
+</div>
+
+<script>
+async function kirim() {
+  const judul = judul.value;
+  const lokasi = lokasi.value;
+  const tanggal = tanggal.value;
+  const deskripsi = deskripsi.value;
+
+  let foto_url = "";
+
+  const file = document.getElementById("foto").files[0];
+  if (file) {
+    const fd = new FormData();
+    fd.append("file", file);
+
+    const up = await fetch("/api/upload", { method:"POST", body: fd });
+    const j = await up.json();
+    foto_url = j.url;
+  }
+
+  const res = await fetch("/api/kegiatan", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ judul, lokasi, tanggal, deskripsi, foto_url })
+  });
+
+  const json = await res.json();
+  msg.innerText = "Tersimpan. Menunggu verifikasi admin.";
+}
+</script>
+
+</body>
+</html>
