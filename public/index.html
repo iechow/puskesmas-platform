@@ -94,7 +94,9 @@ async function loadLatest() {
   `;
 }
 
-loadLatest();
-<script>
+document.addEventListener("DOMContentLoaded", () => {
+  loadLatest();
+});
+</script>
 </body>
 </html>
