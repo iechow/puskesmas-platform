@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 
 </div>
+  <script>
 async function loadLatest() {
   const res = await fetch("/api/kegiatan");
   const json = await res.json();
@@ -94,6 +95,6 @@ async function loadLatest() {
 }
 
 loadLatest();
-
+<script>
 </body>
 </html>
