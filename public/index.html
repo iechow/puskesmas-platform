@@ -33,11 +33,42 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <!-- ISI -->
 <div class="container">
-  <h2>🩺 Puskesmas Kombay</h2>
-  <p>Pelayanan kesehatan masyarakat Kampung Kombay</p>
 
-  <h3>Kegiatan Terbaru</h3>
-  <div id="list"></div>
+  <h2>🏥 Tentang Kami</h2>
+  <div class="card">
+    <p>
+      Puskesmas Kombay adalah fasilitas pelayanan kesehatan tingkat pertama
+      yang melayani masyarakat Kampung Kombay dan sekitarnya dengan pendekatan
+      promotif, preventif, kuratif, dan rehabilitatif.
+    </p>
+  </div>
+
+  <h2>📢 Kegiatan Terbaru</h2>
+  <div id="latest"></div>
+
+  <h2>⏰ Jadwal Pelayanan</h2>
+
+  <h3>🏥 Dalam Gedung</h3>
+  <div class="card">
+    <ul>
+      <li>Senin – Jumat: 08.00 – 14.00</li>
+      <li>Poli Umum</li>
+      <li>Poli KIA</li>
+      <li>Imunisasi</li>
+      <li>Laboratorium</li>
+    </ul>
+  </div>
+
+  <h3>📍 Luar Gedung</h3>
+  <div id="jadwal-luar"></div>
+
+  <h2>☎️ Kontak Kami</h2>
+  <div class="card">
+    <p>📍 Kampung Kombay</p>
+    <p>📞 08xxxxxxxx</p>
+    <p>📧 puskesmas.kombay@gmail.com</p>
+  </div>
+
 </div>
 <script>
 async function loadKegiatan() {
