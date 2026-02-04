@@ -70,34 +70,30 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 
 </div>
-<script>
-async function loadKegiatan() {
+async function loadLatest() {
   const res = await fetch("/api/kegiatan");
   const json = await res.json();
 
   if (!json.data || json.data.length === 0) {
-    document.getElementById("list").innerHTML = "<p>Belum ada kegiatan.</p>";
+    document.getElementById("latest").innerHTML = "<p>Belum ada kegiatan.</p>";
     return;
   }
 
-  let html = "";
-  json.data.forEach(k => {
-    html += `
-      <div style="background:#fff;padding:16px;margin:16px 0;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.08)">
-        <h3>${k.judul}</h3>
-        ${k.foto_url ? `<img src="${k.foto_url}" style="max-width:100%;border-radius:8px;margin:10px 0">` : ""}
-        <p>📍 ${k.lokasi}</p>
-        <p>📅 ${k.tanggal}</p>
-        <p>${k.deskripsi}</p>
-      </div>
-    `;
-  });
+  const k = json.data[0];
 
-  document.getElementById("list").innerHTML = html;
+  document.getElementById("latest").innerHTML = `
+    <div class="card">
+      <h3>${k.judul}</h3>
+      ${k.foto_url ? `<img src="${k.foto_url}" style="width:100%;border-radius:8px">` : ""}
+      <p>📍 ${k.lokasi}</p>
+      <p>📅 ${k.tanggal}</p>
+      <p>${k.deskripsi}</p>
+      <a href="/kegiatan.html">Lihat semua kegiatan →</a>
+    </div>
+  `;
 }
 
-loadKegiatan();
-</script>
+loadLatest();
 
 </body>
 </html>
