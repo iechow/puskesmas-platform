@@ -1,20 +1,25 @@
 import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
+
   const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_PUBLISHABLE_KEY
   );
 
-  const today = new Date().toISOString().split("T")[0];
-  const seven = new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0];
+  const today = new Date();
+  const nextWeek = new Date();
+  nextWeek.setDate(today.getDate() + 7);
+
+  const start = today.toISOString().split("T")[0];
+  const end = nextWeek.toISOString().split("T")[0];
 
   const { data, error } = await supabase
     .from("kegiatan")
     .select("*")
     .eq("status", "published")
-    .gte("tanggal", today)
-    .lte("tanggal", seven)
+    .gte("tanggal", start)
+    .lte("tanggal", end)
     .order("tanggal", { ascending: true });
 
   if (error) {
