@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Input Jadwal Kegiatan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="container">
+  <h2>📅 Input Jadwal Luar Gedung</h2>
+
+  <form id="form">
+
+    <input placeholder="Judul kegiatan" id="judul" required>
+    <input placeholder="Lokasi" id="lokasi" required>
+    <input type="date" id="tanggal" required>
+
+    <textarea placeholder="Deskripsi kegiatan" id="deskripsi"></textarea>
+
+    <button type="submit">Simpan Jadwal</button>
+
+  </form>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+document.getElementById("form").onsubmit = async e => {
+  e.preventDefault();
+
+  const data = {
+    judul: judul.value,
+    lokasi: lokasi.value,
+    tanggal: tanggal.value,
+    deskripsi: deskripsi.value
+  };
+
+  const res = await fetch("/api/jadwal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const json = await res.json();
+
+  msg.innerText = json.status === "ok"
+    ? "✅ Jadwal tersimpan!"
+    : "❌ Gagal menyimpan";
+
+  form.reset();
+};
+</script>
+
+</body>
+</html>
