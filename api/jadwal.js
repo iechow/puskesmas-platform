@@ -1,48 +1,48 @@
+export const config = {
+  runtime: "nodejs"
+};
+
 import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
 
   const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_PUBLISHABLE_KEY
+    process.env.SUPABASE_SERVICE_KEY
   );
 
-  const today = new Date();
-  const nextWeek = new Date();
-  nextWeek.setDate(today.getDate() + 7);
+  // ======================
+  // GET → ambil jadwal
+  // ======================
 
-  const start = today.toISOString().split("T")[0];
-  const end = nextWeek.toISOString().split("T")[0];
+  if (req.method === "GET") {
 
-  const { data, error } = await supabase
-    .from("kegiatan")
-    .select("*")
-    .eq("status", "published")
-    .gte("tanggal", start)
-    .lte("tanggal", end)
-    .order("tanggal", { ascending: true });
+    const { data, error } = await supabase
+      .from("jadwal")
+      .select("*")
+      .order("tanggal", { ascending: true });
 
-  if (error) {
-    return res.status(500).json({ error });
+    if (error) return res.status(500).json({ error });
+
+    return res.json({ status: "ok", data });
   }
 
-  res.json({ data });
-}
-if (req.method === "POST") {
+  // ======================
+  // POST → simpan jadwal
+  // ======================
 
-  const { judul, lokasi, tanggal, deskripsi } = req.body;
+  if (req.method === "POST") {
 
-  const { data, error } = await supabase
-    .from("kegiatan")
-    .insert([{
-      judul,
-      lokasi,
-      tanggal,
-      deskripsi,
-      status: "published"
-    }]);
+    const { judul, lokasi, tanggal, deskripsi } = req.body;
 
-  if (error) return res.status(500).json({ error });
+    const { data, error } = await supabase
+      .from("jadwal")
+      .insert([{ judul, lokasi, tanggal, deskripsi }]);
 
-  return res.json({ status: "ok", data });
+    if (error) return res.status(500).json({ error });
+
+    return res.json({ status: "ok", data });
+  }
+
+  res.status(405).json({ error: "Method not allowed" });
 }
