@@ -28,3 +28,21 @@ export default async function handler(req, res) {
 
   res.json({ data });
 }
+if (req.method === "POST") {
+
+  const { judul, lokasi, tanggal, deskripsi } = req.body;
+
+  const { data, error } = await supabase
+    .from("kegiatan")
+    .insert([{
+      judul,
+      lokasi,
+      tanggal,
+      deskripsi,
+      status: "published"
+    }]);
+
+  if (error) return res.status(500).json({ error });
+
+  return res.json({ status: "ok", data });
+}
