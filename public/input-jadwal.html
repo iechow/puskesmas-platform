@@ -1,78 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Input Jadwal Luar Gedung</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f4f7;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+  text-align: center;
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-form input,
-form textarea,
-form button {
-  width: 100%;
-  padding: 10px;
+input,
+textarea,
+button {
+  padding: 12px;
   font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
-form button {
+textarea {
+  resize: vertical;
+}
+
+button {
   background: #0d6efd;
   color: white;
   border: none;
-  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#msg {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
 }
 </style>
-  <title>Input Jadwal Kegiatan</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
 <div class="container">
-  <h2>📅 Input Jadwal Luar Gedung</h2>
 
-  <form id="form">
+<h2>📅 Input Jadwal Luar Gedung</h2>
 
-    <input placeholder="Judul kegiatan" id="judul" required>
-    <input placeholder="Lokasi" id="lokasi" required>
-    <input type="date" id="tanggal" required>
+<form id="formJadwal">
 
-    <textarea placeholder="Deskripsi kegiatan" id="deskripsi"></textarea>
+<input id="judul" placeholder="Judul kegiatan" required>
 
-    <button type="submit">Simpan Jadwal</button>
+<input id="lokasi" placeholder="Lokasi" required>
 
-  </form>
+<input type="date" id="tanggal" required>
 
-  <p id="msg"></p>
+<textarea id="deskripsi" placeholder="Deskripsi kegiatan"></textarea>
+
+<button type="submit">Simpan Jadwal</button>
+
+</form>
+
+<p id="msg"></p>
+
 </div>
 
 <script>
-document.getElementById("form").onsubmit = async e => {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
 
-  const data = {
-    judul: judul.value,
-    lokasi: lokasi.value,
-    tanggal: tanggal.value,
-    deskripsi: deskripsi.value
-  };
+const form = document.getElementById("formJadwal");
+const msg = document.getElementById("msg");
 
-  const res = await fetch("/api/jadwal", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
+form.addEventListener("submit", async e => {
 
-  const json = await res.json();
+e.preventDefault();
 
-  msg.innerText = json.status === "ok"
-    ? "✅ Jadwal tersimpan!"
-    : "❌ Gagal menyimpan";
-
-  form.reset();
+const data = {
+  judul: document.getElementById("judul").value,
+  lokasi: document.getElementById("lokasi").value,
+  tanggal: document.getElementById("tanggal").value,
+  deskripsi: document.getElementById("deskripsi").value
 };
+
+msg.textContent = "Mengirim...";
+
+try {
+
+const res = await fetch("/api/jadwal", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+});
+
+const json = await res.json();
+
+if (json.status === "ok") {
+  msg.textContent = "✅ Jadwal berhasil disimpan!";
+  form.reset();
+} else {
+  msg.textContent = "❌ Gagal menyimpan jadwal";
+}
+
+} catch (err) {
+msg.textContent = "⚠️ Error koneksi";
+console.error(err);
+}
+
+});
+
+});
 </script>
 
 </body>
